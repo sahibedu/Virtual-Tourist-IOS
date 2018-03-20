@@ -33,8 +33,6 @@ class MapViewViewController: UIViewController,MKMapViewDelegate,NSFetchedResults
         fetchedResultsController = nil
     }
     
-    
-    
     fileprivate func setUpFetchedResults() {
         let fetchRequest:NSFetchRequest<Pin> = Pin.fetchRequest()
         fetchRequest.sortDescriptors = []
@@ -70,6 +68,7 @@ class MapViewViewController: UIViewController,MKMapViewDelegate,NSFetchedResults
         mapView.addGestureRecognizer(longPressGesture)
     }
     
+    
     //Adding a Custom Annotation Pin to Map
     
      //func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
@@ -92,11 +91,29 @@ class MapViewViewController: UIViewController,MKMapViewDelegate,NSFetchedResults
     }
     
     
-    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-        let destinationVC = storyboard?.instantiateViewController(withIdentifier: "photoCollectionVC") as! PhotoCollectionViewController
-        navigationController?.pushViewController(destinationVC, animated: true)
-        
+    fileprivate func DeletePinFromCD(_ viewToDelete: MKAnnotation?, _ mapView: MKMapView) {
+        for pins in fetchedResultsController.fetchedObjects!{
+            if (pins.latitude == viewToDelete?.coordinate.latitude && pins.longitude == viewToDelete?.coordinate.longitude){
+                dataController.viewContext.delete(pins)
+                mapView.removeAnnotation(viewToDelete!)
+                break
+            }
+        }
+        try? dataController.viewContext.save()
     }
+    
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+        if isEditingStateOn{
+            DeletePinFromCD(view.annotation, mapView)
+        } else {
+            let destinationVC = storyboard?.instantiateViewController(withIdentifier: "photoCollectionVC") as! PhotoCollectionViewController
+            destinationVC.dataController = dataController
+            destinationVC.pinRecieved = view.annotation
+            navigationController?.pushViewController(destinationVC, animated: true)
+        }
+    }
+    
+    
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
         let entity = NSEntityDescription.entity(forEntityName: "MapRegion", in: dataController.viewContext)
         let mapRegionToSave = MapRegion(entity: entity!, insertInto: dataController.viewContext)
@@ -127,6 +144,11 @@ class MapViewViewController: UIViewController,MKMapViewDelegate,NSFetchedResults
     
     @IBAction func EditButtonSet(_ sender: Any) {
         isEditingStateOn = !isEditingStateOn
+        if isEditingStateOn{
+            self.navigationItem.title = "Editing Mode on"
+        } else {
+            self.navigationItem.title = "Map View"
+        }
     }
     
 }
