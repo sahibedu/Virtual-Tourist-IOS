@@ -10,25 +10,65 @@ import UIKit
 import MapKit
 import CoreData
 
-class MapViewViewController: UIViewController,MKMapViewDelegate{
+class MapViewViewController: UIViewController,MKMapViewDelegate,NSFetchedResultsControllerDelegate{
 
     @IBOutlet weak var mapView: MKMapView!
-    var Pin : AnnotationPin!
-    var dataController : DataController!
     
+    var dataController : DataController!
+    var fetchedResultsController:NSFetchedResultsController<Pin>!
+    var isEditingStateOn : Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
         mapView.delegate = self
-        
         setMapRegion()
+        longPressGesture()
+        setUpFetchedResults()
+        FetchPinFromCD()
         
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        fetchedResultsController = nil
+    }
+    
+    
+    
+    fileprivate func setUpFetchedResults() {
+        let fetchRequest:NSFetchRequest<Pin> = Pin.fetchRequest()
+        fetchRequest.sortDescriptors = []
+        fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.viewContext, sectionNameKeyPath: nil, cacheName: nil)
+        fetchedResultsController.delegate = self
+        do{
+            try fetchedResultsController.performFetch()
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+    
+    func FetchPinFromCD(){
+        for objects in fetchedResultsController.fetchedObjects!{
+            let annotationCoordinate = CLLocationCoordinate2D(latitude: objects.latitude, longitude: objects.longitude)
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = annotationCoordinate
+            mapView.addAnnotation(annotation)
+        }
+    }
+    
+    func SavePinToCD(Coordinates : CLLocationCoordinate2D){
+        let pinToAdd = Pin(context: dataController.viewContext)
+        pinToAdd.latitude = Coordinates.latitude
+        pinToAdd.longitude = Coordinates.longitude
+        try? dataController.viewContext.save()
+    }
+    
+    func longPressGesture(){
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(addAnnotation(press:)))
         longPressGesture.minimumPressDuration = 2.0
         mapView.addGestureRecognizer(longPressGesture)
     }
-    
-    
     
     //Adding a Custom Annotation Pin to Map
     
@@ -44,14 +84,13 @@ class MapViewViewController: UIViewController,MKMapViewDelegate{
         if press.state == .began{
             let locationForAnnotation = press.location(in: mapView)
             let coordinatesForAnnotation = mapView.convert(locationForAnnotation, toCoordinateFrom: mapView)
-            
             let annotation = MKPointAnnotation()
             annotation.coordinate = coordinatesForAnnotation
-            
             mapView.addAnnotation(annotation)
-            
+            SavePinToCD(Coordinates: coordinatesForAnnotation)
         }
     }
+    
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         let destinationVC = storyboard?.instantiateViewController(withIdentifier: "photoCollectionVC") as! PhotoCollectionViewController
@@ -75,16 +114,20 @@ class MapViewViewController: UIViewController,MKMapViewDelegate{
         let fetchRequest:NSFetchRequest<MapRegion>=MapRegion.fetchRequest()
         do{
             mapRegions = try! dataController.viewContext.fetch(fetchRequest)
-        } catch {
-            print(error.localizedDescription)
         }
-        let newMapRegion = mapRegions.last
-        let coordinate = CLLocationCoordinate2D(latitude: (newMapRegion?.centerlatitude)!, longitude: (newMapRegion?.centerlongitude)!)
-        let span = MKCoordinateSpanMake((newMapRegion?.spanlatitude)!, (newMapRegion?.spanlongitude)!)
-        let region = MKCoordinateRegionMake(coordinate, span)
-        mapView.setRegion(region, animated: true)
+        if mapRegions.count > 0 {
+            let newMapRegion = mapRegions.last
+            let coordinate = CLLocationCoordinate2D(latitude: (newMapRegion?.centerlatitude)!, longitude: (newMapRegion?.centerlongitude)!)
+            let span = MKCoordinateSpanMake((newMapRegion?.spanlatitude)!, (newMapRegion?.spanlongitude)!)
+            let region = MKCoordinateRegionMake(coordinate, span)
+            mapView.setRegion(region, animated: true)
+        }
+        
     }
     
-
+    @IBAction func EditButtonSet(_ sender: Any) {
+        isEditingStateOn = !isEditingStateOn
+    }
+    
 }
 

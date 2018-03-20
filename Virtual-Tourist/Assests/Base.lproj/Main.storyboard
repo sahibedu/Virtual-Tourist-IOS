@@ -49,6 +49,11 @@
                     </view>
                     <navigationItem key="navigationItem" title="Map View" id="NdI-LN-Tz5">
                         <barButtonItem key="backBarButtonItem" title="OK" id="Vtm-TC-WB0"/>
+                        <barButtonItem key="rightBarButtonItem" style="done" systemItem="edit" id="i9v-fD-eUA">
+                            <connections>
+                                <action selector="EditButtonSet:" destination="jwn-Xd-CNX" id="Ed8-0r-8kl"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="mapView" destination="cjH-zn-L8A" id="Uc5-ht-MTX"/>
