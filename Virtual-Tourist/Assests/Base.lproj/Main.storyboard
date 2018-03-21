@@ -85,7 +85,7 @@
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="f0Y-40-ULS">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="f0Y-40-ULS" customClass="CollectionCell" customModule="Virtual_Tourist" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="130" height="130"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
@@ -128,7 +128,9 @@
                         <viewLayoutGuide key="safeArea" id="Gbz-5A-L11"/>
                     </view>
                     <connections>
+                        <outlet property="collectionView" destination="cII-fv-Iup" id="D4I-Ap-RB9"/>
                         <outlet property="mapView" destination="fza-j1-TzP" id="Ocz-5L-HQx"/>
+                        <outlet property="reloadDataBtn" destination="SdI-sg-Vdq" id="MEY-1K-yE8"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Qf6-gH-5iY" userLabel="First Responder" sceneMemberID="firstResponder"/>

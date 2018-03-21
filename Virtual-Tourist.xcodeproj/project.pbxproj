@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2F0D0E302062A16C001872D2 /* CollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F0D0E2F2062A16C001872D2 /* CollectionCell.swift */; };
 		2F0F0863206134DA0097FD92 /* Flickr Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F0F0862206134DA0097FD92 /* Flickr Constants.swift */; };
 		2F0F086520613E940097FD92 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F0F086420613E940097FD92 /* DataController.swift */; };
 		2F5F1AEB2060036C00A1EAFE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F5F1AEA2060036C00A1EAFE /* AppDelegate.swift */; };
@@ -19,6 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2F0D0E2F2062A16C001872D2 /* CollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionCell.swift; sourceTree = "<group>"; };
 		2F0F0862206134DA0097FD92 /* Flickr Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Flickr Constants.swift"; sourceTree = "<group>"; };
 		2F0F086420613E940097FD92 /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
 		2F5F1AE72060036C00A1EAFE /* Virtual-Tourist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Virtual-Tourist.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -77,6 +79,7 @@
 				2FDC0ABB20606804003877DD /* Assests */,
 				2FDC0ABA206067DD003877DD /* Controllers */,
 				2FDC0AB9206067C2003877DD /* Models */,
+				2F0D0E2F2062A16C001872D2 /* CollectionCell.swift */,
 			);
 			path = "Virtual-Tourist";
 			sourceTree = "<group>";
@@ -184,6 +187,7 @@
 				2FDC0ABE20606C8E003877DD /* PhotoCollectionViewController.swift in Sources */,
 				2F5F1AED2060036C00A1EAFE /* MapViewViewController.swift in Sources */,
 				2F0F0863206134DA0097FD92 /* Flickr Constants.swift in Sources */,
+				2F0D0E302062A16C001872D2 /* CollectionCell.swift in Sources */,
 				2F5F1AF32060036C00A1EAFE /* Virtual_Tourist.xcdatamodeld in Sources */,
 				2F5F1AEB2060036C00A1EAFE /* AppDelegate.swift in Sources */,
 			);

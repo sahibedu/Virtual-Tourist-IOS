@@ -12,6 +12,9 @@ import MapKit
 class PhotoCollectionViewController : UIViewController {
     
     @IBOutlet weak var mapView: MKMapView!
+    @IBOutlet weak var collectionView: UICollectionView!
+    @IBOutlet weak var reloadDataBtn: UIButton!
+    
     var dataController : DataController!
     var pinRecieved : MKAnnotation!
  
@@ -25,6 +28,8 @@ class PhotoCollectionViewController : UIViewController {
         let span = MKCoordinateSpanMake(pinRecieved.coordinate.latitude, pinRecieved.coordinate.longitude)
         let region = MKCoordinateRegionMake(coordinate, span)
         mapView.setRegion(region, animated: true)
-        
     }
+    
+    
+    
 }
