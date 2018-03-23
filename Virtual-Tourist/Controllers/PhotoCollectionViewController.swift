@@ -8,8 +8,9 @@
 
 import UIKit
 import MapKit
+import CoreData
 
-class PhotoCollectionViewController : UIViewController {
+class PhotoCollectionViewController : UIViewController,UICollectionViewDelegate,UICollectionViewDataSource{
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var collectionView: UICollectionView!
@@ -22,15 +23,42 @@ class PhotoCollectionViewController : UIViewController {
         super.viewDidLoad()
         setupInitialView()
         getNetworkRequest()
+        collectionView.delegate = self
     }
     
     func setupInitialView(){
-        let coordinate = CLLocationCoordinate2D(latitude: pinRecieved.coordinate.latitude, longitude: pinRecieved.coordinate.longitude)
-        let span = MKCoordinateSpanMake(pinRecieved.coordinate.latitude, pinRecieved.coordinate.longitude)
-        let region = MKCoordinateRegionMake(coordinate, span)
-        mapView.setRegion(region, animated: true)
+        mapView.addAnnotation(pinRecieved)
+        mapView.setRegion(MKCoordinateRegionMake(pinRecieved.coordinate, MKCoordinateSpanMake(0.05, 0.05))  , animated: true)
+        
     }
     
+    fileprivate func networkSessio(_ methodParameters: [String : String]) {
+        let session = URLSession.shared
+        let request = URLRequest(url: FlickrURL(parameters: methodParameters as [String : AnyObject]))
+        let task = session.dataTask(with: request) {
+            (data,request,error) in
+            if (error == nil){
+                let parsedResult : [String : AnyObject]!
+                do{
+                    try parsedResult = JSONSerialization.jsonObject(with: data!, options: .allowFragments) as! [String : AnyObject]
+                    let photosDictionary = parsedResult[Constants.FlickrResponseKeys.Photos] as? [String:AnyObject]
+                    let photoArray = photosDictionary![Constants.FlickrResponseKeys.Photo] as? [[String:AnyObject]]
+                    let randomPhotoArray = photoArray![0] as? [String:AnyObject]
+                    let imageURLString = randomPhotoArray![Constants.FlickrResponseKeys.MediumURL] as! String
+                    let imageURL = URL(string: imageURLString)
+                    
+                    
+                    
+                } catch {
+                    print("Error in Fetching Results")
+                }
+                
+            }//Check For Error Ends Here
+            
+        }//Data Request Ends Here
+        
+        task.resume()
+    }
     
     func getNetworkRequest(){
         let methodParameters = [
@@ -43,21 +71,7 @@ class PhotoCollectionViewController : UIViewController {
             Constants.FlickrParameterKeys.NoJSONCallback: Constants.FlickrParameterValues.DisableJSONCallback
         ]
         
-        let session = URLSession.shared
-        let request = URLRequest(url: FlickrURL(parameters: methodParameters as [String : AnyObject]))
-        let task = session.dataTask(with: request) {
-            (data,request,error) in
-            if (error == nil){
-                let parsedResult : [String : AnyObject]
-                do{
-                    try parsedResult = JSONSerialization.jsonObject(with: data!, options: .allowFragments) as! [String : AnyObject]
-                    print(parsedResult)
-                } catch {
-                    print("Error in Fetching Results")
-                }
-            }
-        }
-        task.resume()
+        networkSessio(methodParameters)
     }
     
     
@@ -71,10 +85,6 @@ class PhotoCollectionViewController : UIViewController {
         return "\(minimumLon),\(minimumLat),\(maximumLon),\(maximumLat)"
     }
     
-    func setUpURL(){
-        
-        
-    }
     
     func FlickrURL(parameters : [String : AnyObject]) -> URL{
         var urlComponents = URLComponents()
@@ -89,6 +99,16 @@ class PhotoCollectionViewController : UIViewController {
         }
         return urlComponents.url!
     }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 0
+    }
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let protypeCell = collectionView.dequeueReusableCell(withReuseIdentifier: "photoCollectionCell", for: indexPath) as! CollectionCell
+        return protypeCell
+    }
+    
+    
     
     
 }
