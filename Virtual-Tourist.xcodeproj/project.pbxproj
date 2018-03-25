@@ -16,6 +16,7 @@
 		2F5F1AF32060036C00A1EAFE /* Virtual_Tourist.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2F5F1AF12060036C00A1EAFE /* Virtual_Tourist.xcdatamodeld */; };
 		2F5F1AF52060036C00A1EAFE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F5F1AF42060036C00A1EAFE /* Assets.xcassets */; };
 		2F5F1AF82060036C00A1EAFE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2F5F1AF62060036C00A1EAFE /* LaunchScreen.storyboard */; };
+		2FCB12D82066CCA700C02865 /* NetworkingFlickr.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FCB12D72066CCA700C02865 /* NetworkingFlickr.swift */; };
 		2FDC0ABE20606C8E003877DD /* PhotoCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FDC0ABD20606C8E003877DD /* PhotoCollectionViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -31,6 +32,7 @@
 		2F5F1AF42060036C00A1EAFE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2F5F1AF72060036C00A1EAFE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2F5F1AF92060036C00A1EAFE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2FCB12D72066CCA700C02865 /* NetworkingFlickr.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkingFlickr.swift; sourceTree = "<group>"; };
 		2FDC0ABD20606C8E003877DD /* PhotoCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCollectionViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -80,6 +82,7 @@
 				2FDC0ABA206067DD003877DD /* Controllers */,
 				2FDC0AB9206067C2003877DD /* Models */,
 				2F0D0E2F2062A16C001872D2 /* CollectionCell.swift */,
+				2FCB12D72066CCA700C02865 /* NetworkingFlickr.swift */,
 			);
 			path = "Virtual-Tourist";
 			sourceTree = "<group>";
@@ -187,6 +190,7 @@
 				2FDC0ABE20606C8E003877DD /* PhotoCollectionViewController.swift in Sources */,
 				2F5F1AED2060036C00A1EAFE /* MapViewViewController.swift in Sources */,
 				2F0F0863206134DA0097FD92 /* Flickr Constants.swift in Sources */,
+				2FCB12D82066CCA700C02865 /* NetworkingFlickr.swift in Sources */,
 				2F0D0E302062A16C001872D2 /* CollectionCell.swift in Sources */,
 				2F5F1AF32060036C00A1EAFE /* Virtual_Tourist.xcdatamodeld in Sources */,
 				2F5F1AEB2060036C00A1EAFE /* AppDelegate.swift in Sources */,
