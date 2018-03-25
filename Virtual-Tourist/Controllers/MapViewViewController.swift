@@ -23,9 +23,13 @@ class MapViewViewController: UIViewController,MKMapViewDelegate,NSFetchedResults
         mapView.delegate = self
         setMapRegion()
         longPressGesture()
+        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
         setUpFetchedResults()
         FetchPinFromCD()
-        
+
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -59,7 +63,10 @@ class MapViewViewController: UIViewController,MKMapViewDelegate,NSFetchedResults
         let pinToAdd = Pin(context: dataController.viewContext)
         pinToAdd.latitude = Coordinates.latitude
         pinToAdd.longitude = Coordinates.longitude
-        try? dataController.viewContext.save()
+        do{
+            try? dataController.viewContext.save()
+        }
+        
     }
     
     func longPressGesture(){
@@ -95,7 +102,6 @@ class MapViewViewController: UIViewController,MKMapViewDelegate,NSFetchedResults
         for pins in fetchedResultsController.fetchedObjects!{
             if (pins.latitude == viewToDelete?.coordinate.latitude && pins.longitude == viewToDelete?.coordinate.longitude){
                 dataController.viewContext.delete(pins)
-                mapView.removeAnnotation(viewToDelete!)
                 break
             }
         }
@@ -103,15 +109,39 @@ class MapViewViewController: UIViewController,MKMapViewDelegate,NSFetchedResults
     }
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+        
+        for objects in fetchedResultsController.fetchedObjects!{
+            if(objects.latitude==view.annotation?.coordinate.latitude || objects.longitude == view.annotation?.coordinate.longitude){
+                print("Entered in If in MapViewController Means Found")
+            }
+        }
+        
         if isEditingStateOn{
             DeletePinFromCD(view.annotation, mapView)
+            mapView.removeAnnotation(view.annotation!)
+            
+
         } else {
-            let destinationVC = storyboard?.instantiateViewController(withIdentifier: "photoCollectionVC") as! PhotoCollectionViewController
-            destinationVC.dataController = dataController
-            destinationVC.pinRecieved = view.annotation
-            navigationController?.pushViewController(destinationVC, animated: true)
+            performSegue(withIdentifier: "photoCollection", sender: view.annotation)
         }
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "photoCollection"{
+            let destinationVC = segue.destination as? PhotoCollectionViewController
+            let coords = sender as! MKAnnotation
+            destinationVC?.pinRecieved = coords
+            destinationVC?.dataController = dataController
+            for pinToSend in fetchedResultsController.fetchedObjects!{
+                if(pinToSend.latitude == coords.coordinate.latitude && pinToSend.longitude == coords.coordinate.longitude){
+                    destinationVC?.pinSaved = pinToSend
+                    break
+                }
+            }
+        }
+    }
+    
+    
     
     
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {

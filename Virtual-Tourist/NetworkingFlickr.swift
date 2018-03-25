@@ -15,11 +15,11 @@ class NetworkingFlickr : NSFetchedResultsController<Photos>{
     var fetchedResultsController:NSFetchedResultsController<Photos>!
     var dataController : DataController!
     
-    init(pin : MKAnnotation,dataaController : DataController){
+    init(coords : MKAnnotation,dataaController : DataController,pinToSave : Pin){
         super.init()
+        print("Networking Flickr Called")
         dataController = dataaController
-        let pintosave = pin
-        getNetworkRequest(pinRecieved: pin)
+        getNetworkRequest(pinRecieved: coords, pinToSave: pinToSave)
         setupFetchRequest(dataaController)
     }
     
@@ -33,33 +33,18 @@ class NetworkingFlickr : NSFetchedResultsController<Photos>{
         } catch {
             print(error.localizedDescription)
         }
-        FetchPhotosFromCD()
         
     }
     
-    func FetchPhotosFromCD(){
-        for objects in fetchedResultsController.fetchedObjects!{
-            print("Printing Objects in Networking Flickr")
-            print(objects.url!)
-        }
-        let fetchRequest:NSFetchRequest<Photos> = Photos.fetchRequest()
-        let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
-        do{
-            try dataController.viewContext.execute(batchDeleteRequest)
-        } catch {
-            print(error.localizedDescription)
-        }
-        
-    }
     
-    func SavePinToCD(photoURLToSave : String,pinToSave : MKAnnotation){
+    func SavePinToCD(photoURLToSave : String,pinToSave : Pin){
         let photoToSave = Photos(context: dataController.viewContext)
         photoToSave.url = photoURLToSave
-        photoToSave.pin = pinToSave as? Pin
+        photoToSave.pin = pinToSave
         try? dataController.viewContext.save()
     }
     
-    fileprivate func networkSessio(_ methodParameters: [String : String],pintoSave : MKAnnotation) {
+    fileprivate func networkSessio(_ methodParameters: [String : String],coords : MKAnnotation,pinToSave : Pin) {
         let session = URLSession.shared
         let request = URLRequest(url: FlickrURL(parameters: methodParameters as [String : AnyObject]))
         let task = session.dataTask(with: request) {
@@ -73,7 +58,7 @@ class NetworkingFlickr : NSFetchedResultsController<Photos>{
                     for i in 0...10{
                         let randomPhotoArray = photoArray![i] as? [String:AnyObject]
                         let imageURLString = randomPhotoArray![Constants.FlickrResponseKeys.MediumURL] as! String
-                        self.SavePinToCD(photoURLToSave: imageURLString, pinToSave: pintoSave)
+                        self.SavePinToCD(photoURLToSave: imageURLString, pinToSave: pinToSave)
                     }
                     
                 } catch {
@@ -85,7 +70,7 @@ class NetworkingFlickr : NSFetchedResultsController<Photos>{
         task.resume()
     }
     
-    func getNetworkRequest(pinRecieved : MKAnnotation){
+    func getNetworkRequest(pinRecieved : MKAnnotation,pinToSave : Pin){
         let methodParameters = [
             Constants.FlickrParameterKeys.Method: Constants.FlickrParameterValues.SearchMethod,
             Constants.FlickrParameterKeys.APIKey: Constants.FlickrParameterValues.APIKey,
@@ -96,7 +81,7 @@ class NetworkingFlickr : NSFetchedResultsController<Photos>{
             Constants.FlickrParameterKeys.NoJSONCallback: Constants.FlickrParameterValues.DisableJSONCallback
         ]
         
-        networkSessio(methodParameters, pintoSave: pinRecieved)
+        networkSessio(methodParameters, coords: pinRecieved, pinToSave: pinToSave)
     }
     
     func getbbox(pinRecieved : MKAnnotation) -> String{

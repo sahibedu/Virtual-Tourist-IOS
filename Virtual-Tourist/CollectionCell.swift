@@ -10,4 +10,20 @@ import UIKit
 
 class CollectionCell:UICollectionViewCell{
     
+    @IBOutlet weak var imageView: UIImageView!
+    
+    func initWithPhoto(photoURL : String){
+        let imageURL = URL(string: photoURL)
+        URLSession.shared.dataTask(with: imageURL!){data,response,error in
+            if error==nil{
+                DispatchQueue.main.async {
+                    self.imageView.image = UIImage(data: data! as Data)
+                }
+                
+            }
+        }
+            .resume()
+    }
+    
+    
 }
