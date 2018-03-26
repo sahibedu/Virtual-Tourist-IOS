@@ -81,8 +81,6 @@
 				2FDC0ABB20606804003877DD /* Assests */,
 				2FDC0ABA206067DD003877DD /* Controllers */,
 				2FDC0AB9206067C2003877DD /* Models */,
-				2F0D0E2F2062A16C001872D2 /* CollectionCell.swift */,
-				2FCB12D72066CCA700C02865 /* NetworkingFlickr.swift */,
 			);
 			path = "Virtual-Tourist";
 			sourceTree = "<group>";
@@ -91,6 +89,8 @@
 			isa = PBXGroup;
 			children = (
 				2F5F1AF12060036C00A1EAFE /* Virtual_Tourist.xcdatamodeld */,
+				2F0D0E2F2062A16C001872D2 /* CollectionCell.swift */,
+				2FCB12D72066CCA700C02865 /* NetworkingFlickr.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -331,6 +331,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Q69U7M76JU;
 				INFOPLIST_FILE = "Virtual-Tourist/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "rtsProduction.Virtual-Tourist";
@@ -345,6 +346,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = Q69U7M76JU;
 				INFOPLIST_FILE = "Virtual-Tourist/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "rtsProduction.Virtual-Tourist";

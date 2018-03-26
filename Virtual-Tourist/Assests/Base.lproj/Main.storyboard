@@ -96,9 +96,14 @@
                                                     <rect key="frame" x="0.0" y="0.0" width="130" height="128"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 </imageView>
+                                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="BMf-Bj-cQ5">
+                                                    <rect key="frame" x="55" y="55" width="20" height="20"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                </activityIndicatorView>
                                             </subviews>
                                         </view>
                                         <connections>
+                                            <outlet property="activityIndicator" destination="BMf-Bj-cQ5" id="yK4-ot-7Up"/>
                                             <outlet property="imageView" destination="u3K-ES-r9K" id="f5v-23-7jf"/>
                                         </connections>
                                     </collectionViewCell>
@@ -107,6 +112,9 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SdI-sg-Vdq">
                                 <rect key="frame" x="0.0" y="599" width="375" height="48"/>
                                 <state key="normal" title="New Collection"/>
+                                <connections>
+                                    <action selector="reloadData:" destination="kZA-Ae-4jg" eventType="touchUpInside" id="w6u-MZ-TRy"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

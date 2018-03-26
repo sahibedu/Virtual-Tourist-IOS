@@ -42,11 +42,7 @@ class MapViewViewController: UIViewController,MKMapViewDelegate,NSFetchedResults
         fetchRequest.sortDescriptors = []
         fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.viewContext, sectionNameKeyPath: nil, cacheName: nil)
         fetchedResultsController.delegate = self
-        do{
-            try fetchedResultsController.performFetch()
-        } catch {
-            print(error.localizedDescription)
-        }
+        try? fetchedResultsController.performFetch()
     }
     
     
@@ -99,9 +95,11 @@ class MapViewViewController: UIViewController,MKMapViewDelegate,NSFetchedResults
     
     
     fileprivate func DeletePinFromCD(_ viewToDelete: MKAnnotation?, _ mapView: MKMapView) {
+        try? fetchedResultsController.performFetch()
         for pins in fetchedResultsController.fetchedObjects!{
             if (pins.latitude == viewToDelete?.coordinate.latitude && pins.longitude == viewToDelete?.coordinate.longitude){
-                dataController.viewContext.delete(pins)
+                fetchedResultsController.managedObjectContext.delete(pins)
+                mapView.removeAnnotation(viewToDelete!)
                 break
             }
         }
@@ -109,25 +107,17 @@ class MapViewViewController: UIViewController,MKMapViewDelegate,NSFetchedResults
     }
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-        
-        for objects in fetchedResultsController.fetchedObjects!{
-            if(objects.latitude==view.annotation?.coordinate.latitude || objects.longitude == view.annotation?.coordinate.longitude){
-                print("Entered in If in MapViewController Means Found")
-            }
-        }
-        
         if isEditingStateOn{
             DeletePinFromCD(view.annotation, mapView)
-            mapView.removeAnnotation(view.annotation!)
-            
-
         } else {
             performSegue(withIdentifier: "photoCollection", sender: view.annotation)
+            mapView.deselectAnnotation(view.annotation, animated: false)
         }
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "photoCollection"{
+            try? fetchedResultsController.performFetch()
             let destinationVC = segue.destination as? PhotoCollectionViewController
             let coords = sender as! MKAnnotation
             destinationVC?.pinRecieved = coords

@@ -10,7 +10,7 @@ import UIKit
 import MapKit
 import CoreData
 
-class PhotoCollectionViewController : UIViewController,NSFetchedResultsControllerDelegate ,UICollectionViewDataSource,UICollectionViewDelegate{
+class PhotoCollectionViewController : UIViewController,UICollectionViewDataSource,UICollectionViewDelegate,NSFetchedResultsControllerDelegate{
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var collectionView: UICollectionView!
@@ -35,10 +35,15 @@ class PhotoCollectionViewController : UIViewController,NSFetchedResultsControlle
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setUpFetchedResults()
-        if fetchedResultsController.fetchedObjects == nil{
-            _ = NetworkingFlickr(coords: pinRecieved, dataaController: dataController, pinToSave: pinSaved)
+        try? fetchedResultsController.performFetch()
+            if (pinSaved.photos?.count)! < 1{
+                _ = NetworkingFlickr(coords: pinRecieved, dataaController: dataController, pinToSave: pinSaved)
         }
-
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        print("Perfromed Fetch on PhotoCollectionVC")
+        try? fetchedResultsController.performFetch()
     }
     
     func setupInitialView(){
@@ -52,33 +57,44 @@ class PhotoCollectionViewController : UIViewController,NSFetchedResultsControlle
         fetchRequest.predicate = NSPredicate(format: "pin==%@", argumentArray: [pinSaved])
         fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataController.viewContext, sectionNameKeyPath: nil, cacheName: nil)
         fetchedResultsController.delegate = self
-        do{
-            try fetchedResultsController.performFetch()
-            print("Performed Fetch")
-            for objects in fetchedResultsController.fetchedObjects!{
-                print(objects.url!)
-            }
-        } catch {
-            print(error.localizedDescription)
-        }
     }
     
-    
-   
-    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return fetchedResultsController.fetchedObjects!.count
+        return fetchedResultsController.fetchedObjects?.count != nil ? (fetchedResultsController.fetchedObjects?.count)! : 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
         let prototypeCell = collectionView.dequeueReusableCell(withReuseIdentifier: "photoCell", for: indexPath) as! CollectionCell
         prototypeCell.initWithPhoto(photoURL: (fetchedResultsController.fetchedObjects![indexPath.row]).url!)
         return prototypeCell
     }
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if (navigationItem.rightBarButtonItem?.title == "Done"){
-                print("Call Delete Function")
+            let object = fetchedResultsController.object(at: indexPath)
+            dataController.viewContext.delete(object)
+            try? dataController.viewContext.save()
+            collectionView.reloadData()
+            try? fetchedResultsController.performFetch()
         }
     }
+    @IBAction func reloadData(_ sender: Any) {
+        _ = NetworkingFlickr(coords: pinRecieved, dataaController: dataController, pinToSave: pinSaved)
+    }
+    
+    
+    
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        switch type {
+        case .insert:
+            collectionView.insertItems(at: [newIndexPath!])
+            break
+        case .delete:
+            collectionView.deleteItems(at: [indexPath!])
+        default:
+            return
+        }
+    }
+    
 }
+

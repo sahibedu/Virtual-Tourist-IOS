@@ -17,23 +17,28 @@ class NetworkingFlickr : NSFetchedResultsController<Photos>{
     
     init(coords : MKAnnotation,dataaController : DataController,pinToSave : Pin){
         super.init()
-        print("Networking Flickr Called")
+        //print("Networking Flickr Called")
         dataController = dataaController
-        getNetworkRequest(pinRecieved: coords, pinToSave: pinToSave)
-        setupFetchRequest(dataaController)
+            //print("Entered Main queue Starting getnetworkrequest")
+            self.getNetworkRequest(pinRecieved: coords, pinToSave: pinToSave)
+            //print("Starting Save")
+            try? self.dataController.viewContext.save()
+            //print("starting fetch Request")
+        self.setupFetchRequest(dataaController,pintoSave: pinToSave)
+            //print("Exiting Main queue")
     }
     
     
-    fileprivate func setupFetchRequest(_ dataaController: DataController) {
+    fileprivate func setupFetchRequest(_ dataaController: DataController,pintoSave : Pin) {
         let fetchRequest:NSFetchRequest<Photos> = Photos.fetchRequest()
         fetchRequest.sortDescriptors = []
+        fetchRequest.predicate = NSPredicate(format: "pin==%@", argumentArray: [pintoSave])
         fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: dataaController.viewContext, sectionNameKeyPath: nil, cacheName: nil)
         do{
             try fetchedResultsController.performFetch()
         } catch {
             print(error.localizedDescription)
         }
-        
     }
     
     
@@ -55,8 +60,9 @@ class NetworkingFlickr : NSFetchedResultsController<Photos>{
                     try parsedResult = JSONSerialization.jsonObject(with: data!, options: .allowFragments) as! [String : AnyObject]
                     let photosDictionary = parsedResult[Constants.FlickrResponseKeys.Photos] as? [String:AnyObject]
                     let photoArray = photosDictionary![Constants.FlickrResponseKeys.Photo] as? [[String:AnyObject]]
-                    for i in 0...10{
-                        let randomPhotoArray = photoArray![i] as? [String:AnyObject]
+                    for _ in 0...10{
+                        let randomNo = Int(arc4random_uniform(UInt32((photoArray?.count)!-2)))
+                        let randomPhotoArray = photoArray![randomNo] as? [String:AnyObject]
                         let imageURLString = randomPhotoArray![Constants.FlickrResponseKeys.MediumURL] as! String
                         self.SavePinToCD(photoURLToSave: imageURLString, pinToSave: pinToSave)
                     }
@@ -68,6 +74,7 @@ class NetworkingFlickr : NSFetchedResultsController<Photos>{
             }//Check For Error Ends Here
         }//Data Request Ends Here
         task.resume()
+        
     }
     
     func getNetworkRequest(pinRecieved : MKAnnotation,pinToSave : Pin){
