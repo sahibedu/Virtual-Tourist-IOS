@@ -38,7 +38,7 @@ class PhotoCollectionViewController : UIViewController,UICollectionViewDataSourc
         try? fetchedResultsController.performFetch()
             if (pinSaved.photos?.count)! < 1{
                 _ = NetworkingFlickr(coords: pinRecieved, dataaController: dataController, pinToSave: pinSaved)
-        }
+        } 
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -65,7 +65,7 @@ class PhotoCollectionViewController : UIViewController,UICollectionViewDataSourc
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let prototypeCell = collectionView.dequeueReusableCell(withReuseIdentifier: "photoCell", for: indexPath) as! CollectionCell
-        prototypeCell.initWithPhoto(photoURL: (fetchedResultsController.fetchedObjects![indexPath.row]).url!)
+        prototypeCell.initWithPhoto(recievedPhotoInstance: (fetchedResultsController.fetchedObjects![indexPath.row]))
         return prototypeCell
     }
     
@@ -79,6 +79,12 @@ class PhotoCollectionViewController : UIViewController,UICollectionViewDataSourc
         }
     }
     @IBAction func reloadData(_ sender: Any) {
+        if let results = fetchedResultsController.fetchedObjects{
+            for objects in results{
+                    dataController.viewContext.delete(objects)
+                    try? dataController.viewContext.save()
+            }
+        }
         _ = NetworkingFlickr(coords: pinRecieved, dataaController: dataController, pinToSave: pinSaved)
     }
     

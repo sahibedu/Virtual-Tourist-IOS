@@ -23,13 +23,11 @@ class MapViewViewController: UIViewController,MKMapViewDelegate,NSFetchedResults
         mapView.delegate = self
         setMapRegion()
         longPressGesture()
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         setUpFetchedResults()
-        FetchPinFromCD()
-
+        fetchPinFromCD()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -46,7 +44,8 @@ class MapViewViewController: UIViewController,MKMapViewDelegate,NSFetchedResults
     }
     
     
-    func FetchPinFromCD(){
+    func fetchPinFromCD(){
+        mapView.removeAnnotations(mapView.annotations)
         for objects in fetchedResultsController.fetchedObjects!{
             let annotationCoordinate = CLLocationCoordinate2D(latitude: objects.latitude, longitude: objects.longitude)
             let annotation = MKPointAnnotation()
@@ -67,20 +66,9 @@ class MapViewViewController: UIViewController,MKMapViewDelegate,NSFetchedResults
     
     func longPressGesture(){
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(addAnnotation(press:)))
-        longPressGesture.minimumPressDuration = 2.0
+        longPressGesture.minimumPressDuration = 0.5
         mapView.addGestureRecognizer(longPressGesture)
     }
-    
-    
-    //Adding a Custom Annotation Pin to Map
-    
-     //func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-       // let annotationView = MKAnnotationView(annotation: Pin, reuseIdentifier: "SavePin")
-        //annotationView.image = UIImage(named: "placeholder")
-        //let transform = CGAffineTransform(scaleX: 0.3, y: 0.3)
-        //annotationView.transform = transform
-        //return annotationView
-    //}
     
     @objc func addAnnotation(press : UILongPressGestureRecognizer){
         if press.state == .began{

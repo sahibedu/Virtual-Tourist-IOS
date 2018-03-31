@@ -46,6 +46,14 @@ class NetworkingFlickr : NSFetchedResultsController<Photos>{
         let photoToSave = Photos(context: dataController.viewContext)
         photoToSave.url = photoURLToSave
         photoToSave.pin = pinToSave
+        let photoURL = URL(string: photoURLToSave)
+        URLSession.shared.dataTask(with: photoURL!){ (data,response,error) in
+            if error == nil{
+                DispatchQueue.global().async {
+                    photoToSave.imageData = data
+                }
+            }
+        }.resume()
         try? dataController.viewContext.save()
     }
     
